@@ -10,4 +10,4 @@ them with corresponding labels `10MB-25MB`, `5MB-10MB`, `2MB-5MB`, or
 Usage
 -----
 
-  gmailsize.py username password
+    gmailsize.py username password
