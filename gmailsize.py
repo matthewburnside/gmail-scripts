@@ -1,14 +1,7 @@
 #!/usr/bin/env python
 
 import imaplib
-import re
-import rfc822
-import StringIO
-import email.header
-import getpass
-import os
 import sys
-from optparse import OptionParser
 
 default = {
 	'host': 'imap.gmail.com',
@@ -27,13 +20,38 @@ def main(username, password):
 	if status == 'NO':
 		sys.exit(data)
 
-	#status, data = imap.search(None, "(larger {})".format(8 * 1024 * 1024))
-	status, data = imap.uid('search', None, "(larger {})".format(8 * 1024 * 1024))
-
-	imap.create("8MB")
+	label = "10MB-25MB"
+	_, data = imap.uid('search', None, "(larger {})".format(10 * 1024 * 1024))
+	imap.create(label)
 	for uid in data[0].split(' '):
-		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', '8MB')
+		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
 		print uid, status, data
+
+	label = "5MB-10MB"
+	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(5 * 1024 * 1024, 10 * 1024 * 1024))
+	imap.create(label)
+	for uid in data[0].split(' '):
+		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
+		print uid, status, data
+
+#	label = "2MB-5MB"
+#	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(2 * 1024 * 1024, 5 * 1024 * 1024))
+#	imap.create(label)
+#	for uid in data[0].split(' '):
+#		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
+#		print uid, status, data
+#
+#	label = "1MB-2MB"
+#	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(1 * 1024 * 1024, 2 * 1024 * 1024))
+#	imap.create(label)
+#	for uid in data[0].split(' '):
+#		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
+#		print uid, status, data
+
+	imap.close()
+	imap.logout()
+	imap.shutdown()
+
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv[1], sys.argv[2]))
