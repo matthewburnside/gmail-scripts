@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 IMAP_DEBUG_LEVEL=0
 
 import imaplib
@@ -11,10 +12,10 @@ default = {
 }
 
 ranges = [
-    ("10MB-25MB", 10),
-    ("5MB-10MB", 5),
-    ("2MB-5MB", 2),
-    ("1MB-2MB", 1),
+    { 'label': "10MB-25MB", 'start': 10, 'end': 99 },
+    { 'label': "5MB-10MB",  'start': 5,  'end': 10 },
+    { 'label': "2MB-5MB",   'start': 2,  'end': 5  },
+    { 'label': "1MB-2MB",   'start': 1,  'end': 2  },
 ]
 
 def gmail_login(username, password):
@@ -22,53 +23,49 @@ def gmail_login(username, password):
         ret = imaplib.IMAP4_SSL(default['host'], default['port'])
         ret.login(username, password)
     except:
-        print "Failed to connect to gmail's IMAP Server: "
+        print "Failed to connect to Gmail's IMAP Server: "
         raise
     return ret
 
-def main(username, password):
 
+def main(username, password):
     imap = gmail_login(username, password)
     imap.debug = IMAP_DEBUG_LEVEL
     status, data = imap.select("\"[Gmail]/All Mail\"")
     if status == 'NO':
         sys.exit(data)
 
-    last = None
     for r in ranges:
-        print "Working on range %s" % (r[0])
-        label = r[0]
-        if last == None:
-            cmd = "(larger {})".format(r[1] * 1024 * 1024)
-        else:
-            cmd = "(larger {}) (smaller {})".format(r[1] * 1024 * 1024, 
-                                                    last * 1024 * 1024)
-        print cmd
+        print "Range {}:".format(r['label']), 
+        imap.create(r['label'])
+        cmd = "(larger {}) (smaller {})".format(r['start'] * 1024 * 1024, 
+						r['end'] * 1024 * 1024)
         _, data = imap.uid('search', None, cmd)
-        imap.create(label)
         if len(data[0]) == 0:
             print "No matching messages"
             continue
-        for uid in data[0].split(' '):
-            status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
-            print uid, status, data
-        last = r[1]
+
+        uids = data[0].replace(' ', ',')
+        status, data = imap.uid('STORE', uids, '+X-GM-LABELS', r['label'])
+        print status
 
     imap.close()
     imap.logout()
     imap.shutdown()
 
+
 def usage():
     print "%s <gmail address>" % (__file__)
-    print "Labels emails in your gmail account with their sizes in the following ranges:"
+    print "Labels emails in your Gmail account with the following:"
     for r in ranges:
         print r
 
+
 if __name__ == '__main__':
-    if(len(sys.argv) < 2):
+    if (len(sys.argv) < 2):
         usage()
         exit()
-    password = getpass.getpass("Gmail Password:")
-    if(len(password) < 1):
+    password = getpass.getpass("Password: ")
+    if (len(password) < 1):
         exit()
     sys.exit(main(sys.argv[1], password))
