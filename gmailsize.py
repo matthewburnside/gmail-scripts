@@ -34,19 +34,19 @@ def main(username, password):
 		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
 		print uid, status, data
 
-#	label = "2MB-5MB"
-#	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(2 * 1024 * 1024, 5 * 1024 * 1024))
-#	imap.create(label)
-#	for uid in data[0].split(' '):
-#		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
-#		print uid, status, data
-#
-#	label = "1MB-2MB"
-#	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(1 * 1024 * 1024, 2 * 1024 * 1024))
-#	imap.create(label)
-#	for uid in data[0].split(' '):
-#		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
-#		print uid, status, data
+	label = "2MB-5MB"
+	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(2 * 1024 * 1024, 5 * 1024 * 1024))
+	imap.create(label)
+	for uid in data[0].split(' '):
+		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
+		print uid, status, data
+
+	label = "1MB-2MB"
+	_, data = imap.uid('search', None, "(larger {}) (smaller {})".format(1 * 1024 * 1024, 2 * 1024 * 1024))
+	imap.create(label)
+	for uid in data[0].split(' '):
+		status, data = imap.uid('STORE', uid, '+X-GM-LABELS', label)
+		print uid, status, data
 
 	imap.close()
 	imap.logout()
