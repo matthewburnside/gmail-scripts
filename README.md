@@ -9,4 +9,4 @@ a corresponding label **10MB-25MB**, **5MB-10MB** **2MB-5MB** or **1MB-2MB**
 Usage
 -----
 
-    gmailsize.py username password
+    gmailsize.py user@gmail.com
