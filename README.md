@@ -31,5 +31,5 @@ Totals up the size of all messages resulting from a given Gmail search..
 
 ### Example ###
 
-    gmail_searchsize.py user@gmail.com "has:attachment -cheese"
+    gmail_searchsize.py user@gmail.com "has:attachment -filename:jpg"
     
