@@ -1,4 +1,4 @@
-gmail\_size
+* gmail\_size
 -----------
 
 Finds the big emails in your Gmail account.  Scans all your emails (that is,
@@ -10,7 +10,7 @@ every email in **All Mail**) and tags them with a corresponding label
     gmail_size.py user@gmail.com
 
 
-gmail\_labelsize
+* gmail\_labelsize
 ----------------
 
 Totals up the size of all messages associated with each of your Gmail labels.
@@ -20,7 +20,7 @@ Totals up the size of all messages associated with each of your Gmail labels.
     gmail_labelsize.py user@gmail.com
 
 
-gmail\_searchsize
+* gmail\_searchsize
 -----------------
 
 Totals up the size of all messages resulting from a given Gmail search..
