@@ -13,7 +13,7 @@ default = {
 }
 
 list_re   = re.compile(r'\((?P<flags>.*?)\) "(?P<delim>.*)" (?P<mbox>.*)')
-rfc822_re = re.compile("(\d+) \(RFC822.SIZE (\d+).*\)")
+rfc822_re = re.compile("(\d+) \(UID (\d+) RFC822.SIZE (\d+).*\)")
 
 def sizeof_fmt(num):
     for x in ['bytes','KB','MB','GB','TB']:
@@ -49,20 +49,14 @@ def main(username):
             continue
         label_len = int(data[0])
 
-        status, msg = imap.search(None, 'ALL')
-        m = [int(x) for x in msg[0].split()]
-
-        m.sort()
-        if not m:
-            continue
-
-        msg_set = "%d:%d" % (m[0], m[-1])
-        status, sizes = imap.fetch(msg_set, "(RFC822.SIZE)")
+        status, data = imap.uid('search', None, 'ALL')
+        msg_set = data[0].replace(' ', ',')
+        status, sizes = imap.uid('fetch', msg_set, "(RFC822.SIZE)")
 
         label_siz = 0
         for rfc in sizes:
             match = rfc822_re.match(rfc)
-            label_siz += int(match.group(2))
+            label_siz += int(match.group(3))
 
         print label.ljust(25), str(sizeof_fmt(label_siz)).rjust(15)
         imap.close()
