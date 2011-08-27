@@ -48,8 +48,8 @@ def main(username):
             print "No matching messages"
             continue
 
-        uids = data[0].replace(' ', ',')
-        status, data = imap.uid('STORE', uids, '+X-GM-LABELS', r['label'])
+        msg_set = data[0].replace(' ', ',')
+        status, data = imap.uid('STORE', msg_set, '+X-GM-LABELS', r['label'])
         print status
 
     imap.close()
