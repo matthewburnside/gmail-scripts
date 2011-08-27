@@ -18,9 +18,12 @@ ranges = [
     { 'label': "1MB-2MB",   'start': 1,  'end': 2  },
 ]
 
-def gmail_login(username, password):
+def gmail_login(username):
     try:
         ret = imaplib.IMAP4_SSL(default['host'], default['port'])
+        password = getpass.getpass("Password: ")
+        if (len(password) < 1):
+            exit()
         ret.login(username, password)
     except:
         print "Failed to connect to Gmail's IMAP Server: "
@@ -28,8 +31,8 @@ def gmail_login(username, password):
     return ret
 
 
-def main(username, password):
-    imap = gmail_login(username, password)
+def main(username):
+    imap = gmail_login(username)
     imap.debug = IMAP_DEBUG_LEVEL
     status, data = imap.select("\"[Gmail]/All Mail\"")
     if status == 'NO':
@@ -56,16 +59,11 @@ def main(username, password):
 
 def usage():
     print "%s <gmail address>" % (__file__)
-    print "Labels emails in your Gmail account with the following:"
-    for r in ranges:
-        print r
+    print "Labels emails in your Gmail according to their size."
 
 
 if __name__ == '__main__':
     if (len(sys.argv) < 2):
         usage()
         exit()
-    password = getpass.getpass("Password: ")
-    if (len(password) < 1):
-        exit()
-    sys.exit(main(sys.argv[1], password))
+    sys.exit(main(sys.argv[1]))
